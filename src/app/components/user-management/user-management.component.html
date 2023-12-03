@@ -1,0 +1,64 @@
+<div class="container">
+    <div class="nav-container">
+        <mat-form-field appearance="fill">
+            <!-- <mat-label>Search1</mat-label> -->     
+                <input class="search-input" matInput placeholder="Search" [(ngModel)]="searchTerm" (keyup.enter)="applySearch()">
+                <button mat-button matSuffix (click)="applySearch()" aria-label="Search" class="search-icon">
+                  <mat-icon class="search-button">search</mat-icon>
+                </button>       
+          </mat-form-field>
+           <button mat-icon-button (click)="deleteSelectedData()" class="delete-all-button">
+                <mat-icon>delete</mat-icon>
+              </button>    
+    </div>
+    <div *ngIf="dataSource?.data?.length">
+        <table mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> Id </th>
+                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+        
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+        
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef> Email </th>
+                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+            </ng-container>
+        
+            <!-- Role Column -->
+            <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef> Role </th>
+                <td mat-cell *matCellDef="let element"> {{element.role}} </td>
+            </ng-container>
+        
+            <!-- Action Column -->
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                <td class="action-buttons" mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="editRow(element)">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="editRow(element)">
+                    <mat-icon id="delete-button" >delete</mat-icon>
+                </button>
+                </td>
+            </ng-container>
+        
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[10]"
+            showFirstLastButtons
+            aria-label="Select page of periodic elements">
+            </mat-paginator>
+    </div> 
+    <div *ngIf="!dataSource?.data?.length">
+        No Data Found!!
+    </div>
+</div>
