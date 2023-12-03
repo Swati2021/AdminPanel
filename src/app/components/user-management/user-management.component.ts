@@ -9,7 +9,7 @@ export interface TableRow {
   name: string;
   email: string;
   role: string;
-  isEditing?: boolean; // Add this property
+  isEditing?: boolean;
 }
 
 @Component({
@@ -17,6 +17,7 @@ export interface TableRow {
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.css']
 })
+
 export class UserManagementComponent implements OnInit, AfterViewInit {
   dataSource: MatTableDataSource<TableRow> = new MatTableDataSource<TableRow>();
   displayedColumns: string[] = ['select', 'name', 'email', 'role', 'action'];
@@ -38,36 +39,28 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
     this.userDataService.getUsersData().subscribe({
       next: (res: any) => {
         this.dataSource.data = res;
-        console.log("usersdata1",this.dataSource.data);
         this.dataSource.data = res.map((obj: any) => ({ ...obj, isEditing: false }));
-        console.log("usersdata2",this.dataSource.data);
       },
       error: (err: any) => {
-        console.log("erroe",err);
+        console.log("error",err);
       }
     })
   }
 
   editRow(element: any): void {
-    // Implement your logic for editing the row here
     element.isEditing = true;
-    console.log('Editing row:', element);
   }
 
   updateRow(element: any): void {
-    // Save the changes, update the data, and set isEditing back to false
     const index = this.dataSource.data.findIndex(user => user.id === element.id);
-    console.log("indexx",index)
     if (index !== -1) {
       this.dataSource.data[index] = { ...element, isEditing: false };
-      this.dataSource._updateChangeSubscription(); // Manually trigger data change detection
-  }
+      this.dataSource._updateChangeSubscription();
+    }
   }
 
   
   applySearch() {
-    // Filter data based on the search term
-    console.log("applySearch",this.searchTerm)
     const filteredData = this.dataSource.data.filter((user: any) =>
       Object.values(user).some((value: any) =>
         value.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
@@ -75,31 +68,60 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
     );
     if(!this.searchTerm.length)
       this.getUsersInfo();
-
-    // Update the data source with the filtered data
     this.dataSource.data = filteredData;
-
-    // Reset paginator to the first page after applying search
     if (this.paginator) {
       this.paginator.firstPage();
     }
   }
 
-  deleteSelectedData(){
-
-  }
-
-    // Function to toggle selection for a row
-    selectRow(row: any): void {
-      this.selection.toggle(row);
+  deleteSelectedData() {
+    if (this.selection.isEmpty()) {
+      return;
     }
   
-    // Function to select all rows
-    selectAll(event: any): void {
-      if (event.checked) {
-        this.dataSource.data.forEach((row: any) => this.selection.select(row));
-      } else {
-        this.selection.clear();
+    // Delete selected rows from the dataSource
+    this.dataSource.data = this.dataSource.data.filter((row) => !this.selection.isSelected(row));
+  
+    // Clear the selection after deletion
+    this.selection.clear();
+  
+    // If all rows on the current page were deleted, go to the previous page
+    if (this.paginator) {
+      const totalItems = this.dataSource.data.length;
+      const pageSize = this.paginator.pageSize;
+      const pageIndex = this.paginator.pageIndex;
+  
+      if (totalItems === 0 || pageIndex > 0 && totalItems <= pageSize * pageIndex) {
+        this.paginator.previousPage();
       }
     }
+  }
+
+  // Function to toggle selection for a row
+  selectRow(row: any): void {
+    this.selection.toggle(row);
+  }
+  
+  // Function to select all rows
+  selectAll(event: any): void {
+    if (event.checked) {
+      const currentPageData = this.dataSource.connect().value.slice(
+        this.paginator.pageIndex * this.paginator.pageSize,
+        (this.paginator.pageIndex + 1) * this.paginator.pageSize
+      );
+      currentPageData.forEach((row: any) => this.selection.select(row));
+    } else {
+      this.selection.clear();
+    }
+  }
+
+
+  deleteRow(element: TableRow): void {
+    const index = this.dataSource.data.indexOf(element);
+    if (index !== -1) {
+      this.dataSource.data.splice(index, 1);
+      this.dataSource._updateChangeSubscription(); // Manually trigger data change detection
+    }
+  }
+    
 }
