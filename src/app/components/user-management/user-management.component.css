@@ -4,11 +4,9 @@
 }
 
 .nav-container {
-  /* position: relative; */
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  /* background-color: #6f7c7c; */
   height: 50px;
 }
 
@@ -20,10 +18,12 @@ table {
   .action-buttons button {
     margin-right: 8px;
     cursor: pointer;
+    background-color: #d8cfcf;
   }
   
   #delete-button {
     padding: 0px 12px 0px 0px;
+    
   }
 
   .mat-form-field {
@@ -39,39 +39,34 @@ table {
     cursor: pointer;
   }
 
-  /* .mat-form-field {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  } */
-
   .search-button {
-    padding: 0px 0px 5px 0px;
+    /* padding: 0px 0px 5px 0px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
   }
 
   .search-input {
-    /* background-color: red; */
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    height: 25px;
-    width: 100%;
-    font-size: 1rem;
-    /* margin-right: 8px; */
-    width: calc(100% - 8px);
-    /* margin-bottom: 5px; */
+    box-shadow: 0 2px 4px rgba(142, 56, 56, 0.1); */
+    /* height: 25px;
+    width: 100%; */
+    /* font-size: 1rem; */
+    /* width: calc(100% - 8px); */
   }
 
   .delete-all-button {
-    /* margin-left: 800px; */
     margin-right: 20px;
     padding: 0px 10px 0px 0px;
-    /* position: absolute; */
-    /* top: 10px; */
-    /* right: 50px; */
-    /* margin-top: 10px; */
-    /* margin-right: 5px;  */
+    background-color: #c23333;
+    color: white;
+  }
+
+  .selected-row {
+    background-color: #e0e0e0; /* You can adjust the color as needed */
+  }
+
+  .edit-mode {
+    background-color: #f0f8ff; /* Light blue background for edit mode, you can customize this */
   }
