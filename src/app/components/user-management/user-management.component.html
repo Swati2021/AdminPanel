@@ -10,11 +10,17 @@
             <mat-icon>delete</mat-icon>
         </button>    
     </div>
-    <div *ngIf="dataSource?.data?.length">
+    <div *ngIf="isLoading">
+        <!-- Loader or loading message goes here -->
+        <div class="loader-container">
+            <div class="loader"></div>
+          </div>
+    </div>
+    <div *ngIf="!isLoading && dataSource?.data?.length">
         <table mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
             <ng-container matColumnDef="select">
                 <th mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox (change)="selectAll($event)">Select All</mat-checkbox>
+                    <mat-checkbox (change)="selectAll($event)"></mat-checkbox>
                 </th>
                 <td mat-cell *matCellDef="let element">
                     <mat-checkbox (change)="selectRow(element)" [checked]="selection.isSelected(element)"></mat-checkbox>
@@ -86,7 +92,7 @@
             aria-label="Select page of periodic elements">
             </mat-paginator>
     </div> 
-    <div *ngIf="!dataSource?.data?.length">
+    <div *ngIf="!isLoading && !dataSource?.data?.length">
         No Data Found!!
     </div>
 </div>

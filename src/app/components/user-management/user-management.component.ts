@@ -23,6 +23,8 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['select', 'name', 'email', 'role', 'action'];
   searchTerm: string = '';
   selection = new SelectionModel<any>(true, []);
+  isLoading: boolean = true;
+  originalData: TableRow[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private userDataService: UserDataService) { }
@@ -36,12 +38,15 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
   }
 
   getUsersInfo(){
+    this.isLoading = true;
     this.userDataService.getUsersData().subscribe({
       next: (res: any) => {
-        this.dataSource.data = res;
-        this.dataSource.data = res.map((obj: any) => ({ ...obj, isEditing: false }));
+        this.isLoading = false;
+        this.originalData = res.map((obj: any) => ({ ...obj, isEditing: false }));
+        this.dataSource.data = [...this.originalData];
       },
       error: (err: any) => {
+        this.isLoading = false;
         console.log("error",err);
       }
     })
@@ -61,17 +66,19 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
 
   
   applySearch() {
-    const filteredData = this.dataSource.data.filter((user: any) =>
+    if(!this.searchTerm.length){
+      this.dataSource.data = [...this.originalData];
+    }else{
+      const filteredData = this.dataSource.data.filter((user: any) =>
       Object.values(user).some((value: any) =>
         value.toString().toLowerCase().includes(this.searchTerm.toLowerCase())
       )
-    );
-    if(!this.searchTerm.length)
-      this.getUsersInfo();
-    this.dataSource.data = filteredData;
-    if (this.paginator) {
-      this.paginator.firstPage();
-    }
+      );  
+      this.dataSource.data = filteredData;
+      if (this.paginator) {
+        this.paginator.firstPage();
+      }
+    }   
   }
 
   deleteSelectedData() {
@@ -120,7 +127,7 @@ export class UserManagementComponent implements OnInit, AfterViewInit {
     const index = this.dataSource.data.indexOf(element);
     if (index !== -1) {
       this.dataSource.data.splice(index, 1);
-      this.dataSource._updateChangeSubscription(); // Manually trigger data change detection
+      this.dataSource._updateChangeSubscription(); 
     }
   }
     
